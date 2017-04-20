@@ -10,6 +10,8 @@ from nltk.tokenize import sent_tokenize
 from nltk.tokenize import word_tokenize
 from nltk.tokenize import WordPunctTokenizer
 from nltk.corpus import stopwords
+from nltk.corpus import wordnet as wn
+from nltk.util import ngrams
 
 class Parser:
 	def __init__(self,filename):
@@ -19,13 +21,23 @@ class Parser:
 		self.StrFileCountWord="Count_words.txt"
 		self.StrFileNgramPreDebut="Ngram_prefixe_debut.txt"
 		self.StrFileNgramPreFin="Ngram_prefixe_fin.txt"
+		self.StrFileNgramWord="Ngram_words.txt"
 		self.StrFileStopWords="stopwords.txt"
+		self.StrFileSynonymes="Synonymes.txt"
 		
 		self.SeparateSentences(self.Infile, self.StrFileSeparateSentences)
 		self.countWords(self.Infile, self.StrFileCountWord)
 		self.nomPropre(self.Infile, self.StrFileNomPropre)
 		self.ngram_prefixe_debut(self.StrFileCountWord, self.StrFileNgramPreDebut)
 		self.ngram_prefixe_fin(self.StrFileCountWord, self.StrFileNgramPreFin)
+		self.ngrams_word(self.Infile, self.StrFileNgramWord)
+		self.synosymes(self.StrFileCountWord, self.StrFileSynonymes)
+
+	def existe(self, word, l_word):
+		for i in l_word:
+			if word == i:
+				return 1
+		return 0
 
 	def stopWords(self, contenu):
 		
@@ -94,14 +106,8 @@ class Parser:
 		liste_word= []
 
 		for word in token:
-			is_exist= 0
-			#Verifie si le mot est deja alors cela veut qu'il a été compté
-			for word_already in liste_word: 
-				if word == word_already:
-					is_exist= 1
-					break
 
-			if is_exist == 0:
+			if self.existe(word, liste_word) !=1:
 				nb_word= 0
 				#On compte le nombre d'occurence du mot
 				for chaine_mt in token:
@@ -125,13 +131,7 @@ class Parser:
 			lline = word_tokenize(line)
 
 			for mt in lline:
-				exist= 0
-				#On chercher le mot dans la liste des mots deja consultés
-				for es in listes_debut:
-					if mt == es:
-						exist= 1
-				#On verifie bien que le mot n'existe pas dans la liste
-				if exist == 0:
+				if self.existe(mt, listes_debut) !=1:
 					listes_debut.append(mt)
 					val = mt[:1]
 					if ma_liste.find(val) != -1:
@@ -217,6 +217,60 @@ class Parser:
 						filesave.write(chaine1+ " = ["+",".join(ma_liste2)+"]\n")
 		filesave.close()
 		fileread.close()
+
+
+	def ngrams_word(self, strfileread, strfilesave):
+		#La variable fileread contient le fichiers d'entrée c'est a dire le corpus
+		#La variable filesave est le fichier de sauvergade
+		fileread = open(strfileread, encoding="utf-8", mode='r', errors="ignore")
+		filesave = open(strfilesave, encoding="utf-8", mode='w+', errors="ignore")
+
+		#Lecture du corpus
+		content_file = fileread.read()
+		#sent_tokenize permet de separer un corpus en plusieurs phrases
+		token= sent_tokenize(content_file)
+		tokenizer = WordPunctTokenizer()
+		#On parcours chaque mot
+		for line in token:
+			l=[]
+			stp_line= self.stopWords(line)
+			for n in range(2, 7):
+				s = []
+				for ngram in ngrams(stp_line, n):
+					chaine =', '.join(str(i) for i in ngram)
+					filesave.write("["+chaine+"]\n")
+
+		fileread.close()
+		filesave.close()
+
+
+	def synosymes(self, strfileread,strfilesave):
+
+		filesave = open(strfilesave, encoding="utf-8", mode='w+', errors="ignore")
+		fileread= open(strfileread, encoding="utf-8", mode='r', errors="ignore")
+		content = fileread.readlines()
+		ma_liste=[]
+
+		for lg in content:
+			#On separer les mots et les chiffres
+			lg_split= lg.split(":")
+			chaine = lg_split[0]
+
+			l_elem=[]
+			for synset in wn.synsets(chaine, lang='fra'):
+				params = synset.lemma_names(lang='fra')
+
+				for word in params:
+					if self.existe(word, l_elem) !=1:
+						if word != chaine:
+							l_elem.append(word)
+			if len(l_elem) > 0:
+				filesave.write(chaine+ " = ["+",".join(l_elem)+"]\n\n")
+
+		filesave.close()
+		fileread.close()
+
+
 
 
 if __name__ == "__main__":
