@@ -1,83 +1,46 @@
-# Robot Ramasseurs De Balles
+# Text Mining
 ---
 
 |               Fodé HISSIROU               |
 ---
 
 
+##  Objectif
+
+L’objectif de ce projet consiste à connaître l’architecture de base des systèmes
+du traitement automatique du langage naturel de manière à pouvoir concevoir un 
+système selon les besoins spécifiques. Il consiste également de découvrir certain
+outils linguistiques comme Natural Language Toolkit qui est basé sur python et 
+d’appliquer des différentes méthodes de fouilles de données a des données textuelles.
+
 ## 1. Introduction
 
+Ce programme est composé de plusieurs fonctionnalités différentes comme la séparation du corpus
+en phrases, la suppression des stopword, l’occurrence des mots, la détection des noms propres, le
+préfixe d’un mots, le suffixe d’un mots et les synonymes d’un mot. L’ensemble des scripts se trouve
+dans le repertoire src et est repartie sur plusieurs fichiers différents.
 
-#### a. Systèmes multi-agents
+#### - Pour lancer le programme par exemple:
+    - Stopword : python3 main.py -t Stopword -f ../input/data_no_stop.txt
+    - Phrase : python3 main.py -t Stopword -f ../input/data_no_stop.txt
+    - Nompropre : python3 main.py -t Nompropre -f ../input/data_no_stop.txt
+    - Countword : python3 main.py -t Countword -f ../input/data_no_stop.txt
+    - Préfixe : python3 main.py -t Préfixe -f ../input/data_no_stop.txt
+    - Suffixe : python3 main.py -t Suffixe -f ../input/data_no_stop.txt
+    - Synonyme :python3 main.py -t Synonyme -f ../input/data_no_stop.txt
+    - Ngram : python3 main.py -t Ngram -f ../input/data_no_stop.txt
+    - Entité nommées : python3 main.py -t NameEntity -f ../input/data_no_stop.txt
 
-Systèmes multi-agents sont composés d’entités informatiques distribuées qui interagissent entre elles. 
-Il détermine les règles permettant de concevoir des systèmes intelligents artificiels fondés sur des règles. 
-Il s’intéresse aux comportements collectifs produits par des interactions de plusieurs entités autonomes et flexibles.
-Ces entités peuvent opérer de façons collectives pour accomplir les tâches complexes. 
-Même les caractéristiques de modélisation dépendent de l’application, 
-mais il y a bien certaines caractéristiques qui sont communes aux agents : la coopération, la coordination et la communication.
+## 2. La séparation du corpus en Phrase
 
-#### b. Un agent 
-
-C’est une entité autonome, réelle ou abstraite qui est capable d’agir sur elle-même et sur son environnement,
-qui, dans un univers multi-agents, peut communiquer avec d’autres agents et dont le comportement est la conséquence de ses observations,
-de ses connaissances et des interactions avec d’autres agents. 
-Cependant, les agents peuvent être classés en deux catégories principales selon leur comportement et leur complexité de raisonnement 
-afin de séparer les agents dites « intelligents »  des agents moins « intelligents ». 
-On parle donc des agents cognitifs et agents réactifs.
+La fonction SeparateSentences() permet de faire une séparation du corpus en phrase. Pour cela on
+lui donne deux fichiers en paramètre : le premier est le nom du fichier du corpus d’entrée et le
+second est le fichier de sauvegarde. Elle utilise principalement la fonction sent_tokenize() de la
+librarie nltk pour faire une séparation du texte en une liste de phrase. À l'aide d’une boucle je
+parcours chaque élément de la liste pour ajouter le balise <p> au début de la phrase et </p> à la fin
+de la phrase. Cette tache se fait juste avant le sauvegarde des phrases dans un fichier. La figure ci-
+dessous représente un exemple du contenu du fichier de separate_sentences.xml
 
 ![](images/image01.png)
 
-#####  b.1. Les agents cognitifs
-Les agents cognitifs sont fondés sur la coopération d’agents capables à eux  seuls d’effectuer des opérations complexes. 
-Un système cognitif comprend un petit nombre d’agents qui disposent d’une capacité de raisonnement sur une base de connaissances 
-pour traiter les informations diverses liées au domaine d’application.
-Ces types d’agents peuvent être assimilés à des systèmes experts distribués.
 
-
-
-##### b.2. Un agent réactif 
-
-Un agent réactif évolue parmi un nombre important de ses semblables et c’est le résultat des interactions entre leur activité qui donne une impression de comportement global « intelligent ».
-Ses agents de ne possèdent pas de représentations de leur environnement. 
-De ce fait toutes les informations relatives à leur comportement se trouvent dans l’environnement et leurs réactions dépendant uniquement de la perception qu’ils peuvent en avoir.
-
-
-## 2. Présentation de l’outil Netlogo
-Un des outils largement utilisé pour la simulation des systèmes multi-agents est le logiciel Netlogo qui est un logiciel open source fourni sous la licence GPL.  
-Il est à la fois un langage de programmation et un environnement de modélisation pour le développement des systèmes multi-agents.
-De base, il a été développé en Java par l’Université Northwestern pour des raisons pédagogiques, 
-et de nos jours Netlogo est beaucoup utilisé dans le milieu professionnel et cela est dû à sa maniabilité. 
-Il permet de modéliser des phénomènes sans pour autant avoir des connaissances approfondies en programmation. 
-Il est particulièrement adapté à la modélisation de systèmes complexes sur un parcours de temps.
-
-| ![](images/image02.png) |
----
-## 3. Description du modèle
-Dans le cadre du cours du système multiagents, il nous a été demandé de simuler des robots ramasseurs de balles. 
-La simulation à base d’agents a été largement utilisée pour modéliser des phénomènes complexes comme par exemple le ramassage des balles de tennis ou golf, des phénomènes sociaux, biologiques, géographiques... 
-Cependant, dans la réalisation de cette simulation plusieurs contraintes ont été imposées. 
-Des robots capables d’effectuer en toute autonomie de trouver des balles et les transportés pour former un tas composé de trois balles. 
-Ils devraient être capables de transportés une à deux balles en même temps, et devraient être aussi dans l'impossibilité de transportées trois balles en même temps. 
-De ce fait, lorsqu’il rencontre une troisième balle, les agents devraient se voir dans l’obligation d’abandonner ce tas. 
-Le programme doit compter le nombre de tas formés par chaque robot et l’afficher l’ensemble de ces résultats dans un plot.
-
-## 4. Solution proposé
-Le programme comprend deux parties : l’initialisation par la fonction setup et la boucle par la fonction go. 
-L’étape d’initialisation dans le logiciel Netlogo est très importante pour le bon déroulement du programme. 
-Ce programme contient l’initialisation des robots mobiles dont le nombre total dépend de l’utilisateur avec un nombre compris entre 1 à 100 et l’initialisation des balles qui se font aléatoirement et repartie sur toute la surface. 
-Dans la boucle go le programme parcourt chaque robot et vérifie le voisinage autour, s’il trouve une ou deux balles alors il transporte ces balles en se déplaçant d’un tick. 
-Lorsqu'il rencontre une troisième, alors il considère comme que les trois balles sont lourdes à transport 
-et il abandonnait ce tas pour faire une rotation de 180 degrés qui correspondent à la direction opposée de l'étape précédente. 
-
-![](images/image03.png)
-
-## 5. Diagramme de l’algorithme
-Pour mieux comprendre le déroulement du programme, j’ai réalisé un organigramme du programme.
-
-![](images/image04.png)
-
-## Conclusion 
-En conclusion, Ce programme permet de simuler des robots complètement autonomes pour détecter et ramasser des balles afin de former des tas de taille différents.
-Une idée que je trouve intéressant pour améliorer ce projet serais de faire un système de communication pour éviter les collisions entre les robots eux. De plus, gérer des pertes d’énergie des robots.
-D'un point de vue plus général, Ce projet a grandement consolidé mes connaissances sur les notions d’agents cognitifs et réactifs dans le domaine de systèmes multi-agents.
