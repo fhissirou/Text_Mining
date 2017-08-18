@@ -1,10 +1,6 @@
 # Text Mining
 ---
 
-|               Fodé HISSIROU               |
----
-
-
 ##  Objectif
 
 L’objectif de ce projet consiste à connaître l’architecture de base des systèmes
